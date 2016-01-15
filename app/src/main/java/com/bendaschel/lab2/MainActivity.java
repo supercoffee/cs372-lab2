@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private ActionBarDrawerToggle mActionBarToggle;
     private CharSequence mActivityTitle;
+    private int mCurrentItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mDrawerLayout.setDrawerListener(mActionBarToggle);
         mDrawerListView.setOnItemClickListener(this);
         setupListView();
+
+        if(savedInstanceState != null){
+            int lastPosition = savedInstanceState.getInt(AppConstants.EXTRA_LIST_ITEM);
+            setImageViewItem(lastPosition);
+        }else{
+            setImageViewItem(0);
+        }
     }
 
     private void setupListView(){
@@ -79,8 +87,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d("MainActivity", "Item Clicked");
-        ListItem item = ListItem.values()[position];
-        mImageView.setImageResource(item.getId());
+        setImageViewItem(position);
         mDrawerLayout.closeDrawer(mDrawerListView);
     }
+
+    private void setImageViewItem(int position) {
+        ListItem item = ListItem.values()[position];
+        mImageView.setImageResource(item.getId());
+        mCurrentItem = position;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(AppConstants.EXTRA_LIST_ITEM, mCurrentItem);
+    }
+
 }
