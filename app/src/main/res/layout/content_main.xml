@@ -12,13 +12,11 @@
                 tools:context="com.bendaschel.lab1.MainActivity"
                 tools:showIn="@layout/activity_main">
 
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal|top"/>
+        android:id="@+id/imageView"
+        android:layout_gravity="center"/>
 </FrameLayout>
 
 
