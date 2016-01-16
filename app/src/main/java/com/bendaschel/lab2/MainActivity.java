@@ -72,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void setupListView(){
         mDrawerListView.setAdapter(
-                new ArrayAdapter<ListItem>(this, R.layout.item_nav_drawer, ListItem.values())
+                new ArrayAdapter<ListItem>(this, R.layout.item_nav_drawer,
+                        R.id.tv_nav_list_item, ListItem.values())
         );
     }
 
