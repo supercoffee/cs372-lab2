@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Bind(R.id.imageView)
     ImageView mImageView;
 
-    private ActionBarDrawerToggle mActionBarToggle;
+    private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mActivityTitle;
     private int mCurrentItem;
 
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mActivityTitle = getTitle();
-        mActionBarToggle = new ActionBarDrawerToggle(
+        mDrawerToggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         ){
             @Override
@@ -59,9 +59,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 invalidateOptionsMenu();
             }
         };
-        mDrawerLayout.setDrawerListener(mActionBarToggle);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerListView.setOnItemClickListener(this);
         setupListView();
+        setupActionBar();
 
         if(savedInstanceState != null){
             int lastPosition = savedInstanceState.getInt(AppConstants.EXTRA_LIST_ITEM);
@@ -69,6 +70,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }else{
             setImageViewItem(0);
         }
+    }
+
+    private void setupActionBar(){
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
     }
 
     @Override
@@ -84,6 +99,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Per Android docs, hosting activity must invoke this method on the drawer toggle
+        if (mDrawerToggle.onOptionsItemSelected(item)){
+            return true;
+        }
 
         switch (item.getItemId()){
             case R.id.action_about:
