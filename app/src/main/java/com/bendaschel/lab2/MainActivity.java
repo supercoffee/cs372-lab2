@@ -20,6 +20,9 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
+    // Handy annotations to remove "findViewById" and casting boilerplate
+    // Requires installation via gradle
+    // https://jakewharton.github.io/butterknife/
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
@@ -104,7 +107,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d("MainActivity", "Item Clicked");
@@ -121,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         outState.putInt(AppConstants.EXTRA_LIST_ITEM, mCurrentItem);
     }
 
