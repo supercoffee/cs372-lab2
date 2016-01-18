@@ -9,12 +9,15 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -50,12 +53,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 setActionBarTitle(getString(R.string.navigation_drawer_open));
+                invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 setActionBarTitle(mActivityTitle);
+                invalidateOptionsMenu();
             }
         };
         mDrawerLayout.setDrawerListener(mActionBarToggle);
@@ -68,6 +73,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }else{
             setImageViewItem(0);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        if (mDrawerLayout != null && ! mDrawerLayout.isDrawerOpen(mDrawerListView)){
+            getMenuInflater().inflate(R.menu.main, menu);
+        }else{
+            menu.clear();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.action_about:
+                Toast.makeText(this, R.string.toast_about, Toast.LENGTH_LONG).show();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupListView(){
