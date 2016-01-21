@@ -1,23 +1,38 @@
 package com.bendaschel.lab2;
 
+import android.content.res.Configuration;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+/**
+ * Created by Benjamin Daschel
+ * The planet images came from the Google Navigation drawer sample code
+ * https://developer.android.com/training/implementing-navigation/nav-drawer.html
+ */
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     // Handy annotations to remove "findViewById" and casting boilerplate
@@ -35,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mActivityTitle;
     private int mCurrentItem;
+    private List<NavDrawerItem> mNavDrawerItemList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerListView.setOnItemClickListener(this);
-        setupListView();
         setupActionBar();
+        setupListView();
 
         if(savedInstanceState != null){
             int lastPosition = savedInstanceState.getInt(AppConstants.EXTRA_LIST_ITEM);
@@ -99,8 +115,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         // Per Android docs, hosting activity must invoke this method on the drawer toggle
+        // https://developer.android.com/reference/android/support/v7/app/ActionBarDrawerToggle.html#onOptionsItemSelected(android.view.MenuItem)
         if (mDrawerToggle.onOptionsItemSelected(item)){
             return true;
         }
@@ -113,14 +129,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupListView(){
-        mDrawerListView.setAdapter(
-                new ArrayAdapter<ListItem>(this, R.layout.item_nav_drawer,
-                        R.id.tv_nav_list_item, ListItem.values())
-        );
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Per Android docs, hosting activity must invoke this method on the drawer toggle
+        // https://developer.android.com/reference/android/support/v7/app/ActionBarDrawerToggle.html#onConfigurationChanged(android.content.res.Configuration)
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void setActionBarTitle(CharSequence title){
+    private void setupListView() {
+        mNavDrawerItemList = makeNavDrawerList();
+        ListAdapter listAdapter = new ListAdapter();
+        mDrawerListView.setAdapter(listAdapter);
+    }
+
+    private void setActionBarTitle(CharSequence title) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.setTitle(title);
@@ -135,8 +158,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void setImageViewItem(int position) {
-        ListItem item = ListItem.values()[position];
-        mImageView.setImageResource(item.getId());
+        int resId = mNavDrawerItemList.get(position).getFullSizeId();
+        mImageView.setImageResource(resId);
         mCurrentItem = position;
     }
 
@@ -146,4 +169,63 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         outState.putInt(AppConstants.EXTRA_LIST_ITEM, mCurrentItem);
     }
 
+    private List<NavDrawerItem> makeNavDrawerList() {
+
+        TypedArray drawables = getResources().obtainTypedArray(R.array.nav_item_drawables);
+        TypedArray names = getResources().obtainTypedArray(R.array.nav_item_names);
+        TypedArray mainContent = getResources().obtainTypedArray(R.array.nav_item_main_content);
+        List<NavDrawerItem> navDrawerItems = new ArrayList<>();
+        int i = 0;
+        while (i < drawables.length() && i < names.length()){
+            navDrawerItems.add(
+                    new NavDrawerItem(
+                            drawables.getResourceId(i, 0),
+                            names.getString(i),
+                            mainContent.getResourceId(i, 0)
+                    )
+            );
+            i++;
+        }
+        drawables.recycle();
+        names.recycle();
+        mainContent.recycle();
+        return navDrawerItems;
+    }
+
+    private class ListAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return mNavDrawerItemList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mNavDrawerItemList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            /*
+               Setting images inside of a textview is more efficient than using a
+               linear layout with an image view and a textview. (According to Android studio warning)
+               https://developer.android.com/reference/android/widget/TextView.html
+             */
+            if (convertView == null){
+                convertView = getLayoutInflater()
+                        .inflate(R.layout.item_nav_drawer, parent, false);
+            }
+            TextView tv = (TextView) convertView;
+            NavDrawerItem item = mNavDrawerItemList.get(position);
+            tv.setText(item.getName());
+            tv.setCompoundDrawablesWithIntrinsicBounds(item.getId(), 0, 0, 0);
+
+            return tv;
+        }
+    }
 }

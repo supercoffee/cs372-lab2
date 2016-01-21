@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="nav_item_drawables">
+        <item>@drawable/mercury</item>
+        <item>@drawable/venus</item>
+        <item>@drawable/earth</item>
+        <item>@drawable/mars</item>
+        <item>@drawable/jupiter</item>
+        <item>@drawable/saturn</item>
+        <item>@drawable/uranus</item>
+        <item>@drawable/neptune</item>
+    </array>
+    <array name="nav_item_names">
+        <item>"Mercury"</item>
+        <item>"Venus"</item>
+        <item>"Earth"</item>
+        <item>"Mars"</item>
+        <item>"Jupiter"</item>
+        <item>"Saturn"</item>
+        <item>"Uranus"</item>
+        <item>"Neptune"</item>
+    </array>
+    <array name="nav_item_main_content">
+        <item>@drawable/mercury_full</item>
+        <item>@drawable/venus_full</item>
+        <item>@drawable/earth_full</item>
+        <item>@drawable/mars_full</item>
+        <item>@drawable/jupiter_full</item>
+        <item>@drawable/saturn_full</item>
+        <item>@drawable/uranus_full</item>
+        <item>@drawable/neptune_full</item>
+    </array>
+</resources>
